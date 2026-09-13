@@ -177,11 +177,7 @@ def get_treatment_plan(disease, age, gender, medical_history):
     return plan
 
 # Header
-col1, col2 = st.columns([1, 4])
-with col1:
-    st.emoji("🏥")
-with col2:
-    st.title("AI-Based Personalized Treatment Plan Generator")
+st.title("🏥 AI-Based Personalized Treatment Plan Generator")
 st.write("Get instant disease prediction and personalized treatment recommendations")
 st.divider()
 
