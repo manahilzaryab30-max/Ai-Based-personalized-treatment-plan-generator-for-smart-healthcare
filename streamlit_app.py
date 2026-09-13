@@ -1,7 +1,4 @@
 import streamlit as st
-import pandas as pd
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.preprocessing import LabelEncoder
 import json
 
 st.set_page_config(page_title="Healthcare Treatment Plan", layout="wide")
@@ -25,7 +22,7 @@ st.markdown("""
 # Disease database with symptoms and treatments
 DISEASE_DATABASE = {
     "Fever": {
-        "symptoms": ["high temperature", "chills", "body ache", "fatigue"],
+        "symptoms": ["high temperature", "chills", "body ache", "fatigue", "fever"],
         "treatment": [
             "Take paracetamol 500mg every 4-6 hours",
             "Stay hydrated - drink plenty of water",
@@ -36,7 +33,7 @@ DISEASE_DATABASE = {
         "diet": "Light food, soups, and warm liquids"
     },
     "Gastritis": {
-        "symptoms": ["stomach pain", "nausea", "bloating", "loss of appetite"],
+        "symptoms": ["stomach pain", "nausea", "bloating", "loss of appetite", "gastric", "acidity"],
         "treatment": [
             "Take antacid (Omeprazole 20mg daily)",
             "Avoid spicy and fatty foods",
@@ -47,7 +44,7 @@ DISEASE_DATABASE = {
         "diet": "Bland foods, yogurt, milk, banana, rice"
     },
     "Common Cold": {
-        "symptoms": ["runny nose", "cough", "sore throat", "sneezing"],
+        "symptoms": ["runny nose", "cough", "sore throat", "sneezing", "cold"],
         "treatment": [
             "Take vitamin C supplements",
             "Use saline nasal drops",
@@ -58,7 +55,7 @@ DISEASE_DATABASE = {
         "diet": "Citrus fruits, ginger tea, chicken soup"
     },
     "Headache": {
-        "symptoms": ["head pain", "pressure", "tension", "dizziness"],
+        "symptoms": ["head pain", "pressure", "tension", "dizziness", "headache", "migraine"],
         "treatment": [
             "Take ibuprofen 200mg or aspirin 500mg",
             "Apply cold compress to temples",
@@ -69,7 +66,7 @@ DISEASE_DATABASE = {
         "diet": "Stay hydrated, avoid caffeine"
     },
     "Hypertension": {
-        "symptoms": ["high blood pressure", "headache", "chest pain", "fatigue"],
+        "symptoms": ["high blood pressure", "headache", "chest pain", "fatigue", "hypertension", "bp"],
         "treatment": [
             "Take prescribed BP medication regularly",
             "Monitor blood pressure daily",
@@ -80,7 +77,7 @@ DISEASE_DATABASE = {
         "diet": "Low-sodium foods, leafy greens, whole grains"
     },
     "Diabetes": {
-        "symptoms": ["increased thirst", "frequent urination", "fatigue", "blurred vision"],
+        "symptoms": ["increased thirst", "frequent urination", "fatigue", "blurred vision", "diabetes", "sugar"],
         "treatment": [
             "Take insulin or oral antidiabetic drugs",
             "Monitor blood glucose levels",
@@ -91,7 +88,7 @@ DISEASE_DATABASE = {
         "diet": "Whole grains, vegetables, lean proteins, avoid sugar"
     },
     "Anxiety": {
-        "symptoms": ["nervousness", "rapid heartbeat", "sweating", "restlessness"],
+        "symptoms": ["nervousness", "rapid heartbeat", "sweating", "restlessness", "anxiety", "panic"],
         "treatment": [
             "Practice deep breathing exercises",
             "Take prescribed anxiolytics if needed",
@@ -102,7 +99,7 @@ DISEASE_DATABASE = {
         "diet": "Balanced diet, omega-3 rich foods, herbal teas"
     },
     "Insomnia": {
-        "symptoms": ["difficulty sleeping", "waking at night", "fatigue", "irritability"],
+        "symptoms": ["difficulty sleeping", "waking at night", "fatigue", "irritability", "sleep", "insomnia"],
         "treatment": [
             "Maintain consistent sleep schedule",
             "Avoid screens 1 hour before bed",
@@ -111,6 +108,17 @@ DISEASE_DATABASE = {
             "Consult sleep specialist if persistent"
         ],
         "diet": "Avoid caffeine after 3 PM, warm milk before bed"
+    },
+    "Allergies": {
+        "symptoms": ["itching", "rash", "swelling", "hives", "allergic", "allergy"],
+        "treatment": [
+            "Take antihistamine (Cetirizine 10mg)",
+            "Avoid allergen source",
+            "Apply soothing lotion to skin",
+            "Use ice packs for swelling",
+            "Visit allergist for testing"
+        ],
+        "diet": "Avoid trigger foods, eat anti-inflammatory foods"
     }
 }
 
@@ -131,7 +139,7 @@ def predict_disease(symptoms_text):
         return None, None
     
     predicted_disease = max(scores, key=scores.get)
-    confidence = (scores[predicted_disease] / 4) * 100  # Max 4 symptoms
+    confidence = (scores[predicted_disease] / len(DISEASE_DATABASE[predicted_disease]["symptoms"])) * 100
     return predicted_disease, min(confidence, 100)
 
 def get_treatment_plan(disease, age, gender, medical_history):
